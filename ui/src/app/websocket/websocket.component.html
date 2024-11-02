@@ -1,0 +1,21 @@
+<div class="chat-container">
+  <h3>Chat</h3>
+  <div class="messages">
+    <div *ngFor="let message of messages" [ngClass]="message.originId === origin ? 'right' : 'left'">
+      {{ message.originId }}: {{ message.content }}
+      <div class="timestamp">
+        {{ message.timestamp }}
+      </div>
+    </div>
+  </div>
+
+  <div class="message-input">
+    <input
+      type="text"
+      [(ngModel)]="toSend"
+      placeholder="Digite sua mensagem"
+      (keydown.enter)="sendMessage()"
+    />
+    <button (click)="sendMessage()">Enviar</button>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+/* styles.css ou o arquivo CSS específico do seu componente */
+.left {
+  text-align: left; /* Alinhamento à esquerda */
+  background-color: #f0f0f0; /* Cor de fundo para mensagens à esquerda */
+  padding: 5px;
+  margin: 5px 0;
+  border-radius: 5px;
+}
+
+.right {
+  text-align: right; /* Alinhamento à direita */
+  background-color: #d1e7dd; /* Cor de fundo para mensagens à direita */
+  padding: 5px;
+  margin: 5px 0;
+  border-radius: 5px;
+}
+
+.message-input {
+  display: flex; /* Ativa o Flexbox */
+  justify-content: space-between; /* Justifica o espaço entre os itens */
+  align-items: center; /* Alinha os itens verticalmente ao centro */
+  margin-top: 10px; /* Adiciona um espaço acima */
+}
+
+.message-input input {
+  flex-grow: 1; /* Faz o input ocupar o espaço restante */
+  margin-right: 10px; /* Adiciona um espaço entre o input e o botão */
+  padding: 10px; /* Espaçamento interno do input */
+  border: 1px solid #ccc; /* Borda do input */
+  border-radius: 5px; /* Borda arredondada */
+}
+
+.message-input button {
+  padding: 10px 15px; /* Espaçamento interno do botão */
+  background-color: #007bff; /* Cor de fundo do botão */
+  color: white; /* Cor do texto do botão */
+  border: none; /* Remove a borda padrão */
+  border-radius: 5px; /* Borda arredondada */
+  cursor: pointer; /* Cursor de ponteiro ao passar sobre o botão */
+}
+
+.message-input button:hover {
+  background-color: #0056b3; /* Cor do botão ao passar o mouse */
+}
+
+.timestamp {
+  color: #b0b0b0; /* Cor cinza claro */
+  font-size: 0.8em; /* Tamanho da fonte reduzido */
+  margin-top: 2px; /* Espaçamento acima do timestamp */
+}
