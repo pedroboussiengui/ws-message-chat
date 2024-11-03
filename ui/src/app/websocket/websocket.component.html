@@ -1,7 +1,7 @@
 <div class="chat-container">
   <h3>Chat</h3>
   <div class="messages">
-    <div *ngFor="let message of messages" [ngClass]="message.originId === origin ? 'right' : 'left'">
+    <div *ngFor="let message of chat.getMessages()" [ngClass]="message.originId === origin ? 'right' : 'left'">
       {{ message.originId }}: {{ message.content }}
       <div class="timestamp">
         {{ message.timestamp }}

@@ -1,0 +1,17 @@
+<div class="home-container">
+  <h3>Home</h3>
+
+  <div class="chats">
+    <div *ngFor="let chat of chats">
+      <button type="button" class="chat-button" (click)="navigateToChat(chat.getOther(id))">
+        <div class="chat-content">
+          <div class="chat-id-large">{{ chat.getOther(id) }}</div>
+          <div>
+            <div class="chat-id-small">{{ chat.getOther(id) }}</div>
+            <div class="chat-last-message">{{ chat.getLasMessage() }}</div>
+          </div>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>

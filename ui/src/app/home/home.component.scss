@@ -1,0 +1,51 @@
+.chats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chat-card {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.chat-button {
+  display: flex;
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #f1f1f1;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.chat-button:hover {
+  background-color: #e0e0e0;
+}
+
+.chat-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.chat-id-large {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #333;
+}
+
+.chat-id-small {
+  font-size: 1em;
+  color: #666;
+  text-align: right;
+}
+
+.chat-last-message {
+  font-size: 0.8em;
+  color: #888;
+  margin-top: 4px;
+}

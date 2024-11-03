@@ -9,14 +9,15 @@ import io.javalin.Javalin;
 import io.javalin.websocket.WsContext;
 
 public class App {
-    // private static Set<WsContext> users = Collections.newSetFromMap(new ConcurrentHashMap<>());
-
-    private static Map<String, WsContext> users = new ConcurrentHashMap<>();
+    private static final Map<String, WsContext> users = new ConcurrentHashMap<>();
 
     public static void main(String[] args) {
         GsonMapperConfig gsonMapper = new GsonMapperConfig();
         var app = Javalin.create(config -> config.jsonMapper(gsonMapper))
                 .start(7070);
+        
+        MongoDBClient mongoDBClient = MongoDBClient.getInstance("mongodb://localhost:27017", "ws_chat");
+        MessageRepository messageRepository = new MessgeRepositoryImpl(mongoDBClient);
 
         app.ws("/websocket/{origin}/to/{destiny}", ws -> {
             ws.onConnect(ctx -> {
@@ -27,29 +28,27 @@ public class App {
             ws.onMessage(ctx -> {
                 String msg = ctx.message();
                 String originId = ctx.pathParam("origin");
+                String destinyId = ctx.pathParam("destiny");
                 String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm").format(Calendar.getInstance().getTime());
-
-                // String formattedMessage = String.format("%s:%s %s", userId, msg, timeStamp);
                 
-                var formattedMessage = new Message(originId, msg, timeStamp);
+                // monta a json message
+                var formattedMessage = new Message(originId, destinyId, msg, timeStamp);
 
-                String destiny = ctx.pathParam("destiny");
+                // cria ou recupera o chat
+                String chatIdCriado = messageRepository.createOrRecoverChat(originId, destinyId);
 
-                // recupera o user específico
-                WsContext targetUser = users.get(destiny);
+                // salva a mensagem
+                messageRepository.updateChatById(chatIdCriado, formattedMessage);
+
+                // recupera o user target e o próprio user remetente
+                WsContext targetUser = users.get(destinyId);
                 WsContext ownUser = users.get(originId);
-
+                
+                // envia a mensagem apenas para os 2
                 if (targetUser != null && targetUser.session.isOpen()) {
                     targetUser.send(formattedMessage);
                     ownUser.send(formattedMessage);
                 }
-
-                // Envia a mensagem para todos os clientes conectados
-                // users.forEach(session -> {
-                //     if (session.session.isOpen()) {
-                //         session.send(formattedMessage);
-                //     }
-                // });
             });
             ws.onClose(ctx -> {
                 String originId = ctx.pathParam("origin");
