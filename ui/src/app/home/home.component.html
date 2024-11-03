@@ -3,12 +3,12 @@
 
   <div class="chats">
     <div *ngFor="let chat of chats">
-      <button type="button" class="chat-button" (click)="navigateToChat(chat.getOther(id))">
+      <button type="button" class="chat-button" (click)="navigateToChat(chat.otherUser)">
         <div class="chat-content">
-          <div class="chat-id-large">{{ chat.getOther(id) }}</div>
+          <div class="chat-id-large">{{ chat.otherUser }}</div>
           <div>
-            <div class="chat-id-small">{{ chat.getOther(id) }}</div>
-            <div class="chat-last-message">{{ chat.getLasMessage() }}</div>
+            <div class="chat-id-small">{{ chat.otherUser }}</div>
+            <div class="chat-last-message">{{ chat.lastMessage }}</div>
           </div>
         </div>
       </button>

@@ -18,8 +18,14 @@ public class App {
 
     public static void main(String[] args) {
         GsonMapperConfig gsonMapper = new GsonMapperConfig();
-        var app = Javalin.create(config -> config.jsonMapper(gsonMapper))
-                .start(7070);
+        var app = Javalin.create(config -> {
+            config.jsonMapper(gsonMapper);
+            config.bundledPlugins.enableCors(cors -> {
+                cors.addRule(it -> {
+                    it.allowHost("http://localhost:4200");
+                });
+            });
+        }).start(7070);
         
         MongoDBClient mongoDBClient = MongoDBClient.getInstance("mongodb://localhost:27017", "ws_chat");
         MessageRepository messageRepository = new MessgeRepositoryImpl(mongoDBClient);

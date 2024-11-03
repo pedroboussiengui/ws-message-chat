@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Chat, MessageService } from '../services/message.service';
+import { MessageService } from '../services/message.service';
+import { ChatResDTO } from '../types/Chat';
 
 @Component({
   selector: 'app-home',
@@ -9,7 +10,7 @@ import { Chat, MessageService } from '../services/message.service';
 })
 export class HomeComponent implements OnInit {
   id!: any;
-  chats: Chat[] = [];
+  chats: ChatResDTO[] = [];
 
   constructor(
     private readonly messageService: MessageService,
@@ -19,9 +20,15 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('userId');
-    this.messageService.chats$.subscribe(chats => {
-      this.chats = this.messageService.getChatsByUser(this.id as string);
-      console.log(this.chats.length);
+    this.loadChats();
+  }
+
+  loadChats() {
+    this.messageService.getChatsByUser(this.id as string).subscribe({
+      next: (data) => {
+        this.chats = data
+      },
+      error: (err) => console.log(err.error.message)
     });
   }
 

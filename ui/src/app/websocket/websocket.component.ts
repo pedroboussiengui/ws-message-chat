@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { WebsocketService } from '../services/websocket.service';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { Chat, MessageService } from '../services/message.service';
+import { MessageService } from '../services/message.service';
 
 export class Message {
   constructor(
@@ -19,9 +19,9 @@ export class Message {
   styleUrl: './websocket.component.scss'
 })
 export class WebsocketComponent implements OnInit, OnDestroy {
-  // messages: Message[] = [];
+  messages: Message[] = [];
 
-  public chat!: Chat;
+  // public chat!: Chat;
 
   public subscription!: Subscription;
   public origin!: any;
@@ -38,27 +38,32 @@ export class WebsocketComponent implements OnInit, OnDestroy {
     this.origin = this.route.snapshot.paramMap.get('origin');
     this.destiny = this.route.snapshot.paramMap.get('destiny');
     if (this.origin && this.destiny) {
-      const foundChat = this.messageService.getChatBetweenUsers(this.origin, this.destiny);
-      if (foundChat) {
-        this.chat = foundChat;
-      } else {
-        this.chat = this.messageService.createChat(this.origin, this.destiny);
-      } 
+      this.loadMessages(this.origin, this.destiny);
       this.webSocketService.connect(this.origin, this.destiny);
-      this.subscription = this.webSocketService.onMessage().subscribe(
-        (message) => {
-          console.log(this.messageService.getChats());
+      this.subscription = this.webSocketService.onMessage().subscribe({
+        next: (message) => {
           const originId = message.originId;
           const destinyId = message.destinyId;
           const content = message.content;
           const timestamp = message.timestamp;
-          this.chat.addMessage(new Message(originId, destinyId, content, timestamp));
+          this.messages.push(new Message(originId, destinyId, content, timestamp));
         },
-        (error) => {
-          console.error("Erro na conexão", error);
+        error: (err) => {
+          console.error("Erro na conexão", err.error.message);
         }
-      );
+      });
     }
+  }
+
+  loadMessages(origin: string, destiny: string) {
+    this.messageService.getMessageBetweenUsers(origin, destiny).subscribe({
+      next: (data) => {
+        this.messages = data;
+      },
+      error: (err) => {
+        console.error(err.error.message);
+      }
+    });
   }
 
   sendMessage(): void {
@@ -76,3 +81,5 @@ export class WebsocketComponent implements OnInit, OnDestroy {
     }
   }
 }
+
+
