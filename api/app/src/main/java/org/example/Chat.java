@@ -57,7 +57,7 @@ public class Chat {
     }    
     
     public Optional<String> getLasMessage() {
-        if (this.messages.isEmpty()) {
+        if (!this.messages.isEmpty()) {
             String msg = this.messages.get(this.messages.size() - 1).getContent();
             return Optional.of(msg);
         }

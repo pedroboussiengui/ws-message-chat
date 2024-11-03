@@ -2,10 +2,15 @@ package org.example;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.example.dto.ChatResDTO;
+
 import io.javalin.Javalin;
+import io.javalin.http.NotFoundResponse;
 import io.javalin.websocket.WsContext;
 
 public class App {
@@ -18,6 +23,24 @@ public class App {
         
         MongoDBClient mongoDBClient = MongoDBClient.getInstance("mongodb://localhost:27017", "ws_chat");
         MessageRepository messageRepository = new MessgeRepositoryImpl(mongoDBClient);
+
+        app.get("/api/chats/{userId}", ctx -> {
+            String userId = ctx.pathParam("userId");
+            List<Chat> chats = messageRepository.getChatsByUser(userId);
+            List<ChatResDTO> response = chats.stream()
+                .map(chat -> new ChatResDTO(userId, chat))
+                .toList();
+            ctx.json(response);
+        });
+
+        app.get("/api/chats/{user1Id}/and/{user2Id}/messages", ctx -> {
+            String user1Id = ctx.pathParam("user1Id");
+            String user2Id = ctx.pathParam("user2Id");
+            Optional<Chat> chat = messageRepository.getChatBetweenUsers(user1Id, user2Id);
+            if (chat.isEmpty()) throw new NotFoundResponse("Chat not found");
+            List<Message> messages = chat.get().getMessages();
+            ctx.json(messages);
+        });
 
         app.ws("/websocket/{origin}/to/{destiny}", ws -> {
             ws.onConnect(ctx -> {
@@ -37,7 +60,7 @@ public class App {
                 // cria ou recupera o chat
                 String chatIdCriado = messageRepository.createOrRecoverChat(originId, destinyId);
 
-                // salva a mensagem
+                // salva a mensagem na lista de mensagens do chat
                 messageRepository.updateChatById(chatIdCriado, formattedMessage);
 
                 // recupera o user target e o próprio user remetente
